@@ -16,9 +16,13 @@ const slides = [
 
 export default function HeroSlideshow() {
   return (
-    <div className="relative w-full h-[100svh] overflow-hidden">
+    <div className="relative bg-cover bg-center w-full h-[100svh] overflow-hidden"
+      style={{
+      backgroundImage: "url('http://localhost:1337/uploads/background_home_34366fc92c.jpg')"
+  }}
+    >
 
-      {/* Slideshow in background */}
+      {/* Slideshow in background 
       <Swiper
         modules={[Autoplay]}
         autoplay={{ delay: 5000 }}
@@ -34,7 +38,7 @@ export default function HeroSlideshow() {
             />
           </SwiperSlide>
         ))}
-      </Swiper>
+      </Swiper>*/}
 
       {/* Overlay nero trasparente */}
       <div className="absolute inset-0 bg-white/10 z-10" />
@@ -47,7 +51,7 @@ export default function HeroSlideshow() {
             href="http://www.sorazon.it/it/indicazioni"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline flex flex-col items-center"
+            className="text-red-600 hover:text-[#0099CC] no-underline flex flex-col items-center"
           >
             <ListOrdered size={40} className="mb-2" />
             <h3 className="text-xl font-bold mb-1">Indicazioni</h3>
@@ -58,7 +62,7 @@ export default function HeroSlideshow() {
             href="http://www.sorazon.it/it/contatti"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline flex flex-col items-center"
+            className="text-red-600 hover:text-[#0099CC] no-underline flex flex-col items-center"
           >
             <Hospital size={40} className="mb-2" />
             <h3 className="text-xl font-bold mb-1">Centri di riferimento</h3>
@@ -69,7 +73,7 @@ export default function HeroSlideshow() {
             href="http://www.sorazon.it/it/risultati"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline flex flex-col items-center"
+            className="text-red-600 hover:text-[#0099CC] no-underline flex flex-col items-center"
           >
             <BadgeCheck size={40} className="mb-2" />
             <h3 className="text-xl font-bold mb-1">Risultati</h3>

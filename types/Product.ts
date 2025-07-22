@@ -1,9 +1,14 @@
 // types/Product.ts
 
-export interface Product {
+export type Product = {
   id: number;
   nome: string;
   descrizione: string;
   prezzo: number;
-  immagine?: string; // URL già costruito
-}
+  immagine?: {
+    thumbnail?: string;
+    small?: string;
+    medium?: string;
+  };
+};
+
