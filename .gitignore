@@ -1,0 +1,14 @@
+# Dipendenze
+node_modules
+
+# File di build di Next.js
+.next
+
+# File di ambiente locali
+.env.local
+
+# Log e file di sistema
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
