@@ -4,60 +4,14 @@ import { useEffect, useState } from "react";
 import { Product } from "@/types/Product";
 import ProductCard from "./ProductCard";
 import { motion } from "framer-motion";
-import { getFullMediaUrl } from "@/lib/getFullMediaUrl";
-
+import { getProductsClient } from "@/lib/getProductsClient";
 
 export default function HomeProducts() {
   const [prodotti, setProdotti] = useState<Product[]>([]);
 
-useEffect(() => {
-  if (!process.env.NEXT_PUBLIC_API_URL) {
-    console.error("❌ ERRORE: NEXT_PUBLIC_API_URL mancante.");
-    return;
-  }
-
-  fetch(`${process.env.NEXT_PUBLIC_API_URL}/prodottos?populate=immagine`)
-    .then(async (res) => {
-      if (!res.ok) {
-        const error = await res.text();
-        console.error("❌ Errore risposta:", res.status, error);
-        return;
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (!data || !Array.isArray(data.data)) {
-        console.error("❌ Formato dati non valido:", data);
-        return;
-      }
-
-      const prodottiFormattati: Product[] = data.data.map((item: any) => {
-        const formati = item.immagine?.[0]?.formats ?? {};
-
-        return {
-          id: item.id,
-          nome: item.nome ?? "Senza nome",
-          descrizione: Array.isArray(item.descrizione)
-            ? item.descrizione[0]?.children[0]?.text ?? ''
-            : '',
-          prezzo: item.prezzo ?? 0,
-         immagine: {
-          thumbnail: getFullMediaUrl(formati.thumbnail?.url),
-          small: getFullMediaUrl(formati.small?.url),
-          medium: getFullMediaUrl(formati.medium?.url),
-        },
-        };
-      });
-
-      setProdotti(prodottiFormattati);
-    })
-    .catch((err) => {
-      console.error("❌ Errore fetch prodotti:", err);
-    });
-}, []);
-
-
-
+  useEffect(() => {
+    getProductsClient().then(setProdotti);
+  }, []);
 
   return (
     <motion.section
