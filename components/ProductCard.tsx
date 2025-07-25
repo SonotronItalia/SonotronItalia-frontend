@@ -2,35 +2,106 @@
 'use client';
 
 import Image from 'next/image';
-import { Product } from '@/types/Product';
+import { Product, ProductField } from '@/types/Product';
+import { motion } from 'framer-motion';
 
 type Props = {
   product: Product;
+  fields: ProductField[];
 };
 
-export default function ProductCard({ product }: Props) {
-  const imageUrl = product.immagine?.medium ?? '/images/placeholder.jpg';
+export default function ProductCard({ product, fields }: Props) {
+  const imgUrl = product.immagine?.medium ?? '/images/placeholder.jpg';
+
+  function formatLabel(key: string): string {
+    return key
+      .replace(/_/g, ' ')                     // sostituisce underscore con spazi
+      .replace(/\b\w/g, c => c.toUpperCase()); // iniziali maiuscole
+  }
+
 
   return (
-    <div className="rounded-lg shadow hover:shadow-lg transition overflow-hidden bg-white max-w-md w-full">
-      <div className="relative w-full h-64">
-        <Image
-          src={imageUrl}
-          alt={product.nome}
-          fill
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
-          placeholder="empty"
-        />
+    <motion.div
+      className="rounded-lg shadow hover:shadow-lg transition overflow-hidden bg-white max-w-md w-full"
+      initial={{ opacity: 0, y: 50 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      viewport={{ once: true }}
+    >
+      {/* Immagine */}
+      {fields.includes('immagine') && (
+        <div className="relative w-full h-64">
+          <Image
+            src={imgUrl}
+            alt={product.nome}
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
+      )}
+
+      <div className="p-4 space-y-2 text-gray-800">
+        {/* Nome */}
+        {fields.includes('nome') && (
+          <h3 className="text-xl font-bold">{product.nome}</h3>
+        )}
+
+        {/* Descrizione */}
+        {fields.includes('descrizione') && product.descrizione && (
+          <p>{product.descrizione}</p>
+        )}
+
+        {/* Prezzo */}
+        {fields.includes('prezzo') && (
+          <p className="font-bold text-red-600">
+            {product.prezzo && product.prezzo > 0
+              ? `${product.prezzo.toFixed(2)} €`
+              : 'Contattaci'}
+          </p>
+        )}
+
+        {/* Peso */}
+        {fields.includes('peso') && product.peso && (
+          <p className="text-sm italic text-gray-500">
+            Peso: {product.peso}
+          </p>
+        )}
+
+        {/* Altezza */}
+         {fields.includes('altezza') && product.altezza && (
+          <p className="text-sm italic text-gray-500">
+            Altezza: {product.altezza}
+          </p>
+        )}
+
+        {/* Larghezza */}
+         {fields.includes('larghezza') && product.larghezza && (
+          <p className="text-sm italic text-gray-500">
+            Larghezza: {product.larghezza}
+          </p>
+        )}
+
+        {/* Profondita */}
+         {fields.includes('profondita') && product.profondita && (
+          <p className="text-sm italic text-gray-500">
+            Profondità: {product.profondita}
+          </p>
+        )}
       </div>
 
-      <div className="p-4">
-        <h3 className="text-xl font-semibold text-gray-900">{product.nome}</h3>
-        <p className="text-gray-700 mt-2">{product.descrizione}</p>
-        <p className="mt-4 font-bold text-red-600">
-          {product.prezzo > 0 ? `${product.prezzo.toFixed(2)} €` : 'Contattaci'}
+      {fields.includes('scheda_tecnica') && product.scheda_tecnica && (
+  <div className="mt-4 border-t pt-4 text-sm text-gray-600 space-y-1">
+    {Object.entries(product.scheda_tecnica).map(([key, value]) => (
+      value ? (
+        <p key={key}>
+          <span className="font-semibold">{formatLabel(key)}:</span> {value}
         </p>
-      </div>
-    </div>
+      ) : null
+    ))}
+  </div>
+)}
+
+    </motion.div>
   );
 }

@@ -11,7 +11,7 @@ export async function getProductsClient(): Promise<Product[]> {
   }
 
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/prodottos?populate=immagine`);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/prodottos?populate=*`);
     if (!res.ok) {
       const error = await res.text();
       console.error("❌ Errore risposta:", res.status, error);
@@ -26,6 +26,7 @@ export async function getProductsClient(): Promise<Product[]> {
 
     const prodottiFormattati: Product[] = data.data.map((item: any) => {
       const formati = item.immagine?.[0]?.formats ?? {};
+      const scheda = item.scheda_tecnica ?? {};
 
       return {
         id: item.id,
@@ -39,6 +40,27 @@ export async function getProductsClient(): Promise<Product[]> {
           small: getFullMediaUrl(formati.small?.url),
           medium: getFullMediaUrl(formati.medium?.url),
         },
+        peso: item.peso,
+        altezza: item.altezza,
+        larghezza: item.larghezza,
+        profondita: item.profondita,
+        scheda_tecnica: {
+          Tensione_alimentazione: scheda.Tensione_alimentazione,
+          Frequenza_nominale: scheda.Frequenza_nominale,
+          Tensioni_interne: scheda.Tensioni_interne,
+          Potenza_max_assorbita: scheda.Potenza_max_assorbita,
+          Fusibili: scheda.Fusibili,
+          Classe_di_sicurezza: scheda.Classe_di_sicurezza,
+          Grado_di_protezione: scheda.Grado_di_protezione,
+          Temperatura_di_funzionamento: scheda.Temperatura_di_funzionamento,
+          Raffreddamento: scheda.Raffreddamento,
+          Potenza_uscita_max: scheda.Potenza_uscita_max,
+          Modalita_funzionamento: scheda.Modalita_funzionamento,
+          Frequenza_lavoro: scheda.Frequenza_lavoro,
+          Monitor: scheda.Monitor,
+          Omologazione: scheda.Omologazione,
+          Nome: scheda.Nome,
+    }
       };
     });
 

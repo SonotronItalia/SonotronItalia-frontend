@@ -23,7 +23,8 @@ export default function HomeProducts() {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {prodotti.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard key={product.id} product={product} fields={['nome', 'descrizione', 'immagine']} />
+
         ))}
       </div>
     </motion.section>
