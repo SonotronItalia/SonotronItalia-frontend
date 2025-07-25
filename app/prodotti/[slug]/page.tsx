@@ -86,7 +86,7 @@ export default async function ProductDetailPage({ params }: Props) {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
+    <div className="max-w-4xl pt-24 mx-auto px-6 py-12">
       <h1 className="text-4xl font-bold mb-6">{product.nome}</h1>
 
       {product.immagine?.medium && (
