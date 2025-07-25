@@ -18,6 +18,7 @@ export async function getProductsServer(): Promise<Product[]> {
     return {
       id: item.id,
       nome: item.nome,
+      slug: item.slug, // 👈 aggiunto
       descrizione: Array.isArray(item.descrizione)
         ? item.descrizione[0]?.children[0]?.text ?? ''
         : '',

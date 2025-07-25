@@ -21,6 +21,7 @@ export type SchedaTecnica = {
 export type Product = {
   id: number;
   nome: string;
+  slug: string; 
   descrizione: string;
   prezzo: number;
   immagine?: {

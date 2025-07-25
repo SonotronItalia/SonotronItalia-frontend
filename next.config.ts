@@ -1,14 +1,28 @@
+//netx.config.ts
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '1337',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'cdn.sonotronitalia.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'strapi.sonotronitalia.it',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;
-
-// next.config.js
-module.exports = {
-  images: {
-    domains: ['localhost', 'cdn.sonotronitalia.com', 'strapi.sonotronitalia.it'], // Aggiungi il tuo host reale
-  },
-};
