@@ -15,10 +15,9 @@ export default function ProductCard({ product, fields }: Props) {
 
   function formatLabel(key: string): string {
     return key
-      .replace(/_/g, ' ')                     // sostituisce underscore con spazi
-      .replace(/\b\w/g, c => c.toUpperCase()); // iniziali maiuscole
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase());
   }
-
 
   return (
     <motion.div
@@ -42,17 +41,14 @@ export default function ProductCard({ product, fields }: Props) {
       )}
 
       <div className="p-4 space-y-2 text-gray-800">
-        {/* Nome */}
         {fields.includes('nome') && (
           <h3 className="text-xl font-bold">{product.nome}</h3>
         )}
 
-        {/* Descrizione */}
-        {fields.includes('descrizione') && product.descrizione && (
+        {fields.includes('descrizione') && typeof product.descrizione === 'string' && (
           <p>{product.descrizione}</p>
         )}
 
-        {/* Prezzo */}
         {fields.includes('prezzo') && (
           <p className="font-bold text-red-600">
             {product.prezzo && product.prezzo > 0
@@ -61,47 +57,34 @@ export default function ProductCard({ product, fields }: Props) {
           </p>
         )}
 
-        {/* Peso */}
         {fields.includes('peso') && product.peso && (
-          <p className="text-sm italic text-gray-500">
-            Peso: {product.peso}
-          </p>
+          <p className="text-sm italic text-gray-500">Peso: {product.peso}</p>
         )}
 
-        {/* Altezza */}
-         {fields.includes('altezza') && product.altezza && (
-          <p className="text-sm italic text-gray-500">
-            Altezza: {product.altezza}
-          </p>
+        {fields.includes('altezza') && product.altezza && (
+          <p className="text-sm italic text-gray-500">Altezza: {product.altezza}</p>
         )}
 
-        {/* Larghezza */}
-         {fields.includes('larghezza') && product.larghezza && (
-          <p className="text-sm italic text-gray-500">
-            Larghezza: {product.larghezza}
-          </p>
+        {fields.includes('larghezza') && product.larghezza && (
+          <p className="text-sm italic text-gray-500">Larghezza: {product.larghezza}</p>
         )}
 
-        {/* Profondita */}
-         {fields.includes('profondita') && product.profondita && (
-          <p className="text-sm italic text-gray-500">
-            Profondità: {product.profondita}
-          </p>
+        {fields.includes('profondita') && product.profondita && (
+          <p className="text-sm italic text-gray-500">Profondità: {product.profondita}</p>
         )}
       </div>
 
       {fields.includes('scheda_tecnica') && product.scheda_tecnica && (
-  <div className="mt-4 border-t pt-4 text-sm text-gray-600 space-y-1">
-    {Object.entries(product.scheda_tecnica).map(([key, value]) => (
-      value ? (
-        <p key={key}>
-          <span className="font-semibold">{formatLabel(key)}:</span> {value}
-        </p>
-      ) : null
-    ))}
-  </div>
-)}
-
+        <div className="mt-4 border-t pt-4 text-sm text-gray-600 space-y-1">
+          {Object.entries(product.scheda_tecnica).map(([key, value]) =>
+            value ? (
+              <p key={key}>
+                <span className="font-semibold">{formatLabel(key)}:</span> {value}
+              </p>
+            ) : null
+          )}
+        </div>
+      )}
     </motion.div>
   );
 }

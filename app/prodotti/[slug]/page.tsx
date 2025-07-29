@@ -2,46 +2,37 @@
 
 import { getProductsServer } from "@/lib/getProductsServer";
 import { notFound } from "next/navigation";
-import { Metadata } from "next";
 import Image from "next/image";
+import { Metadata } from "next";
+import {RichTextRenderer} from "@/components/RichTextRenderer";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.sonotronitalia.com";
 
 type Props = {
-  params: {
-    slug: string;
-  };
+  params: { slug: string };
 };
 
-// ✅ SEO Metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const {slug} = await params;
+  const { slug } = await params;
   const prodotti = await getProductsServer();
   const product = prodotti.find((p) => p.slug === slug);
-
   if (!product) return {};
 
-  const url = `${BASE_URL}/prodotti/${slug}`;
-  const title = `${product.nome} | Sonotron Italia`;
-  const description = product.descrizione?.slice(0, 160);
-
   return {
-    title,
-    description,
+    title: `${product.nome} | Sonotron Italia`,
+    description: typeof product.descrizione === 'string' ? product.descrizione.slice(0, 160) : '',
+    alternates: {
+      canonical: `${BASE_URL}/prodotti/${slug}`,
+    },
     openGraph: {
-      title,
-      description,
-      type: "website",
-      url,
+      title: product.nome,
+      description: typeof product.descrizione === 'string' ? product.descrizione : '',
       images: [
         {
           url: product.immagine?.medium || `${BASE_URL}/images/placeholder.jpg`,
           alt: product.nome,
         },
       ],
-    },
-    alternates: {
-      canonical: url,
     },
     robots: {
       index: true,
@@ -50,85 +41,116 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// ✅ Pagina Dettaglio
 export default async function ProductDetailPage({ params }: Props) {
-  const {slug} = await params;
+  const { slug } = await params;
   const prodotti = await getProductsServer();
   const product = prodotti.find((p) => p.slug === slug);
-
   if (!product) return notFound();
 
-  const schemaProduct = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    name: product.nome,
-    description: product.descrizione,
-    image: product.immagine?.medium,
-    sku: product.id.toString(),
-    brand: {
-      "@type": "Brand",
-      name: "Sonotron Italia"
-    },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "EUR",
-      price: product.prezzo,
-      availability: "https://schema.org/InStock"
-    },
-    ...(product.larghezza && { width: product.larghezza }),
-    ...(product.profondita && { depth: product.profondita }),
-    ...(product.altezza && { height: product.altezza }),
-    ...(product.scheda_tecnica?.Nome && { gtin13: product.scheda_tecnica?.Nome }),
-  };
-
-  function formatLabel(key: string): string {
-    return key.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  }
-
   return (
-    <div className="max-w-4xl pt-24 mx-auto px-6 py-12">
-      <h1 className="text-4xl font-bold mb-6">{product.nome}</h1>
+    <div className="max-w-6xl mx-auto px-4 pt-24 py-10 space-y-16">
 
-      {product.immagine?.medium && (
-        <div className="relative w-full h-80 mb-8">
+      {/* HERO */}
+      <section className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="space-y-6">
+          <h1 className="text-4xl font-bold">{product.nome}</h1>
+
+          {product.sottotitolo && (
+            <RichTextRenderer content={product.sottotitolo} className="text-xl font-medium text-red-600" />
+          )}
+
+          {product.descrizione && (
+            <RichTextRenderer content={product.descrizione} className="text-gray-700" />
+          )}
+
+          {product.intro_features && (
+            <RichTextRenderer content={product.intro_features} className="text-gray-600" />
+          )}
+        </div>
+
+        <div className="relative w-full h-96 rounded-lg overflow-hidden">
           <Image
-            src={product.immagine.medium}
+            src={product.immagine?.medium || "/images/placeholder.jpg"}
             alt={product.nome}
             fill
-            className="object-cover rounded-lg"
+            className="object-contain"
           />
         </div>
+      </section>
+
+      {/* GALLERY */}
+      <section>
+        <h2 className="text-2xl font-semibold mb-4">Galleria prodotto</h2>
+        {product.gallery?.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {product.gallery.map((img, i) => (
+              <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg">
+                <Image
+                  src={img}
+                  alt={`Immagine ${i + 1}`}
+                  fill
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Image
+            src={product.immagine?.small || "/images/placeholder.jpg"}
+            alt={product.nome}
+            width={900}
+            height={600}
+            className="rounded-md"
+          />
+        )}
+      </section>
+
+      {/* COMPOSIZIONE */}
+      {product.composition_img && (
+        <section className="space-y-4">
+          <h2 className="text-2xl font-semibold">Composizione</h2>
+          <Image
+            src={product.composition_img}
+            alt="Composizione tecnica"
+            width={1000}
+            height={600}
+            className="rounded-lg"
+          />
+        </section>
       )}
 
-      <p className="mb-4 text-gray-700">{product.descrizione}</p>
+      {/* FEATURES */}
+      <section className="space-y-6">
+        <h2 className="text-2xl font-semibold">Funzionalità</h2>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {product.features?.map((feat, idx) => (
+            <div key={idx} className="p-4 bg-gray-100 rounded-lg shadow-sm">
+              <h3 className="font-bold mb-1">{feat.title}</h3>
+              {feat.description && (
+                <RichTextRenderer content={feat.description} className="text-sm text-gray-600" />
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600 mb-8">
-        {product.peso && <p><strong>Peso:</strong> {product.peso}</p>}
-        {product.altezza && <p><strong>Altezza:</strong> {product.altezza}</p>}
-        {product.larghezza && <p><strong>Larghezza:</strong> {product.larghezza}</p>}
-        {product.profondita && <p><strong>Profondità:</strong> {product.profondita}</p>}
-      </div>
-
+      {/* SCHEDA TECNICA */}
       {product.scheda_tecnica && (
-        <div className="border-t pt-6 mt-6">
-          <h2 className="text-2xl font-semibold mb-4">Scheda Tecnica</h2>
-          <div className="space-y-2">
+        <details className="border-t pt-6 mt-6">
+          <summary className="cursor-pointer text-xl font-semibold mb-4 text-blue-600">
+            Scheda Tecnica
+          </summary>
+          <div className="space-y-2 mt-4 text-sm text-gray-700">
             {Object.entries(product.scheda_tecnica).map(([key, value]) =>
               value ? (
                 <p key={key}>
-                  <strong>{formatLabel(key)}:</strong> {value}
+                  <strong>{key.replace(/_/g, " ").toUpperCase()}:</strong> {value}
                 </p>
               ) : null
             )}
           </div>
-        </div>
+        </details>
       )}
-
-      {/* Structured data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaProduct) }}
-      />
     </div>
   );
 }

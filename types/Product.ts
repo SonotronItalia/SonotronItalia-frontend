@@ -33,7 +33,12 @@ export type Product = {
   altezza: string;
   larghezza: string;
   profondita: string;
+  sottotitolo?: string;
+  intro_features?: string;
+  features?: { title: string; description: string }[];
+  composition_img?: string;
   scheda_tecnica?: SchedaTecnica;
+  gallery?: string[];
 };
 
 export type ProductField = keyof Product;
