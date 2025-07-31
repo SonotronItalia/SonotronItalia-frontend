@@ -47,35 +47,41 @@ type Node =
   | CodeBlockNode;
 
 interface Props {
-  content: Node[];
+  content: Node[] | any; // fallback per garantire compatibilità anche con oggetti errati
 }
 
 export const RichTextRenderer: React.FC<Props> = ({ content }) => {
+  if (!Array.isArray(content)) {
+    console.warn("RichTextRenderer: contenuto non valido", content);
+    return null;
+  }
+
   return (
     <div className="prose max-w-none">
-      {content.map((node, i) => {
+      {content.map((node: Node, i: number) => {
         switch (node.type) {
           case "paragraph":
-            return <p key={i}>{node.children.map((c) => c.text).join("")}</p>;
+            return (
+              <p key={i}>
+                {node.children.map((c, idx) => (
+                  <React.Fragment key={idx}>{c.text}</React.Fragment>
+                ))}
+              </p>
+            );
 
           case "list":
-            if (node.format === "unordered") {
-              return (
-                <ul key={i}>
-                  {node.children.map((li, j) => (
-                    <li key={j}>{li.children.map((c) => c.text).join("")}</li>
-                  ))}
-                </ul>
-              );
-            } else {
-              return (
-                <ol key={i}>
-                  {node.children.map((li, j) => (
-                    <li key={j}>{li.children.map((c) => c.text).join("")}</li>
-                  ))}
-                </ol>
-              );
-            }
+            const ListTag = node.format === "ordered" ? "ol" : "ul";
+            return (
+              <ListTag key={i}>
+                {node.children.map((li, j) => (
+                  <li key={j}>
+                    {li.children.map((c, idx) => (
+                      <React.Fragment key={idx}>{c.text}</React.Fragment>
+                    ))}
+                  </li>
+                ))}
+              </ListTag>
+            );
 
           case "image":
             return (
@@ -101,7 +107,9 @@ export const RichTextRenderer: React.FC<Props> = ({ content }) => {
             return (
               <pre key={i} className="bg-gray-100 p-3 rounded-md overflow-auto">
                 <code className={`language-${node.language || "text"}`}>
-                  {node.children.map((c) => c.text).join("")}
+                  {node.children.map((c, idx) => (
+                    <React.Fragment key={idx}>{c.text}</React.Fragment>
+                  ))}
                 </code>
               </pre>
             );
@@ -113,3 +121,5 @@ export const RichTextRenderer: React.FC<Props> = ({ content }) => {
     </div>
   );
 };
+
+export default RichTextRenderer;

@@ -1,10 +1,9 @@
-// app/prodotti/[slug]/page.tsx
-
-import { getProductsServer } from "@/lib/getProductsServer";
+/// app/prodotti/[slug]/page.tsx
+import { getProductBySlugServer } from "@/lib/getProductBySlugServer";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from "next";
-import {RichTextRenderer} from "@/components/RichTextRenderer";
+import { RichTextRenderer } from "@/components/RichTextRenderer";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.sonotronitalia.com";
 
@@ -13,20 +12,21 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const prodotti = await getProductsServer();
-  const product = prodotti.find((p) => p.slug === slug);
+  const {slug} = await params;
+  const product = await getProductBySlugServer(slug);
   if (!product) return {};
 
   return {
     title: `${product.nome} | Sonotron Italia`,
-    description: typeof product.descrizione === 'string' ? product.descrizione.slice(0, 160) : '',
+    description: typeof product.descrizione === "string"
+      ? product.descrizione.slice(0, 160)
+      : "Scopri il prodotto",
     alternates: {
-      canonical: `${BASE_URL}/prodotti/${slug}`,
+      canonical: `${BASE_URL}/prodotti/${product.slug}`,
     },
     openGraph: {
       title: product.nome,
-      description: typeof product.descrizione === 'string' ? product.descrizione : '',
+      description: typeof product.descrizione === "string" ? product.descrizione : "",
       images: [
         {
           url: product.immagine?.medium || `${BASE_URL}/images/placeholder.jpg`,
@@ -34,17 +34,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         },
       ],
     },
-    robots: {
-      index: true,
-      follow: true,
-    },
+    robots: { index: true, follow: true },
   };
 }
 
 export default async function ProductDetailPage({ params }: Props) {
-  const { slug } = await params;
-  const prodotti = await getProductsServer();
-  const product = prodotti.find((p) => p.slug === slug);
+  const {slug} = await params;
+  const product = await getProductBySlugServer(slug);
   if (!product) return notFound();
 
   return (
@@ -55,16 +51,22 @@ export default async function ProductDetailPage({ params }: Props) {
         <div className="space-y-6">
           <h1 className="text-4xl font-bold">{product.nome}</h1>
 
-          {product.sottotitolo && (
-            <RichTextRenderer content={product.sottotitolo} className="text-xl font-medium text-red-600" />
+          {Array.isArray(product.sottotitolo) && (
+            <h2 className="text-xl font-medium text-red-600">
+              <RichTextRenderer content={product.sottotitolo} />
+            </h2>
           )}
 
-          {product.descrizione && (
-            <RichTextRenderer content={product.descrizione} className="text-gray-700" />
+          {Array.isArray(product.descrizione) && (
+            <div className="text-gray-700">
+              <RichTextRenderer content={product.descrizione} />
+            </div>
           )}
 
-          {product.intro_features && (
-            <RichTextRenderer content={product.intro_features} className="text-gray-600" />
+          {Array.isArray(product.intro_features) && (
+            <div className="text-gray-600">
+              <RichTextRenderer content={product.intro_features} />
+            </div>
           )}
         </div>
 
@@ -85,12 +87,7 @@ export default async function ProductDetailPage({ params }: Props) {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {product.gallery.map((img, i) => (
               <div key={i} className="relative aspect-[4/3] overflow-hidden rounded-lg">
-                <Image
-                  src={img}
-                  alt={`Immagine ${i + 1}`}
-                  fill
-                  className="object-cover"
-                />
+                <Image src={img} alt={`Immagine ${i + 1}`} fill className="object-cover" />
               </div>
             ))}
           </div>
@@ -126,9 +123,11 @@ export default async function ProductDetailPage({ params }: Props) {
           {product.features?.map((feat, idx) => (
             <div key={idx} className="p-4 bg-gray-100 rounded-lg shadow-sm">
               <h3 className="font-bold mb-1">{feat.title}</h3>
-              {feat.description && (
-                <RichTextRenderer content={feat.description} className="text-sm text-gray-600" />
-              )}
+              <div className="text-sm text-gray-600">
+                {Array.isArray(feat.description) && (
+                  <RichTextRenderer content={feat.description} />
+                )}
+              </div>
             </div>
           ))}
         </div>

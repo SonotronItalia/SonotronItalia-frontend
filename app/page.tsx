@@ -13,7 +13,7 @@ export default function HomePage() {
       </section>
 
       {/* Sezione 2: Prodotti principali */}
-      <section className="snap-start h-screen w-screen">
+      <section className="pt-24 snap-start h-screen w-screen">
         <HomeProducts />
       </section>
 

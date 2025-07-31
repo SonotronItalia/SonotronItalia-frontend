@@ -1,3 +1,4 @@
+// components/HomeProducts.tsx
 'use client';
 
 import { useEffect, useState } from "react";
@@ -15,16 +16,20 @@ export default function HomeProducts() {
 
   return (
     <motion.section
-      className="h-full w-full flex flex-col items-center justify-center bg-white text-gray-900 px-4"
+      className="w-full flex flex-col items-center justify-center bg-white text-gray-900 px-4 py-12"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
       viewport={{ once: true }}
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <h2 className="text-2xl font-bold mb-6">Scopri i nostri prodotti</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-5xl">
         {prodotti.map((product) => (
-          <ProductCard key={product.id} product={product} fields={['nome', 'descrizione', 'immagine']} />
-
+          <ProductCard
+            key={product.id}
+            product={product}
+            fields={["nome", "descrizione", "immagine"]}
+          />
         ))}
       </div>
     </motion.section>
