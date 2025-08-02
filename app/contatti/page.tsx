@@ -33,7 +33,7 @@ export default async function ContattiPage() {
   }
 
   return (
-    <div className="max-w-3xl pt-24 mx-auto p-6 space-y-4">
+    <div className="max-w-3xl pt-24 pb-28 mx-auto p-6 space-y-4">
       <h1 className="text-3xl font-bold mb-4">Contatti</h1>
 
       <div>

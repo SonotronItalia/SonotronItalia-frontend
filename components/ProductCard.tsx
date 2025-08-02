@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import { Product, ProductField } from '@/types/Product';
 import { motion } from 'framer-motion';
-import { RichTextRenderer } from './RichTextRenderer';
+import RichTextRenderer from './RichTextRenderer';
 
 type Props = {
   product: Product;

@@ -1,83 +1,66 @@
 // components/RichTextRenderer.tsx
 import React from "react";
-
-type TextNode = {
-  type: "text";
-  text: string;
-};
-
-type ParagraphNode = {
-  type: "paragraph";
-  children: TextNode[];
-};
-
-type ListItemNode = {
-  type: "list-item";
-  children: TextNode[];
-};
-
-type ListNode = {
-  type: "list";
-  format: "unordered" | "ordered";
-  children: ListItemNode[];
-};
-
-type ImageNode = {
-  type: "image";
-  url: string;
-  alt?: string;
-};
-
-type VideoNode = {
-  type: "video";
-  url: string;
-};
-
-type CodeBlockNode = {
-  type: "code";
-  language?: string;
-  children: TextNode[];
-};
-
-type Node =
-  | ParagraphNode
-  | ListNode
-  | ImageNode
-  | VideoNode
-  | CodeBlockNode;
+import { StrapiRichTextBlock, StrapiRichTextTextNode } from "@/types/StrapiRichText";
 
 interface Props {
-  content: Node[] | any; // fallback per garantire compatibilità anche con oggetti errati
+  content: StrapiRichTextBlock[] | string | null | undefined;
 }
 
-export const RichTextRenderer: React.FC<Props> = ({ content }) => {
+function renderTextNode(node: StrapiRichTextTextNode, key: number) {
+  let element: React.ReactNode = node.text;
+
+  if (node.code) {
+    element = <code key={key}>{element}</code>;
+  }
+  if (node.bold) {
+    element = <strong key={key}>{element}</strong>;
+  }
+  if (node.italic) {
+    element = <em key={key}>{element}</em>;
+  }
+  if (node.strikethrough) {
+    element = <del key={key}>{element}</del>;
+  }
+
+  if (node.url) {
+    element = (
+      <a key={key} href={node.url} className="text-blue-600 underline">
+        {element}
+      </a>
+    );
+  }
+
+  return element;
+}
+
+const RichTextRenderer: React.FC<Props> = ({ content }) => {
   if (!Array.isArray(content)) {
-    console.warn("RichTextRenderer: contenuto non valido", content);
+    if (typeof content === "string") {
+      return <p className="prose max-w-none">{content}</p>;
+    }
+
+    console.warn("⚠️ RichTextRenderer: contenuto non valido", content);
     return null;
   }
 
   return (
     <div className="prose max-w-none">
-      {content.map((node: Node, i: number) => {
+      {content.map((node, i) => {
         switch (node.type) {
           case "paragraph":
             return (
               <p key={i}>
-                {node.children.map((c, idx) => (
-                  <React.Fragment key={idx}>{c.text}</React.Fragment>
-                ))}
+                {node.children.map((c, idx) => renderTextNode(c, idx))}
               </p>
             );
 
           case "list":
             const ListTag = node.format === "ordered" ? "ol" : "ul";
             return (
-              <ListTag key={i}>
+              <ListTag key={i} className="pl-6 list-disc list-inside">
                 {node.children.map((li, j) => (
                   <li key={j}>
-                    {li.children.map((c, idx) => (
-                      <React.Fragment key={idx}>{c.text}</React.Fragment>
-                    ))}
+                    {li.children.map((c, idx) => renderTextNode(c, idx))}
                   </li>
                 ))}
               </ListTag>
@@ -99,7 +82,7 @@ export const RichTextRenderer: React.FC<Props> = ({ content }) => {
                 key={i}
                 src={node.url}
                 controls
-                className="my-4 max-w-full"
+                className="my-4 max-w-full rounded-md"
               />
             );
 
@@ -107,9 +90,7 @@ export const RichTextRenderer: React.FC<Props> = ({ content }) => {
             return (
               <pre key={i} className="bg-gray-100 p-3 rounded-md overflow-auto">
                 <code className={`language-${node.language || "text"}`}>
-                  {node.children.map((c, idx) => (
-                    <React.Fragment key={idx}>{c.text}</React.Fragment>
-                  ))}
+                  {node.children.map((c, idx) => c.text).join("")}
                 </code>
               </pre>
             );

@@ -1,5 +1,7 @@
 // types/Product.ts
 
+import { StrapiRichTextBlock } from "./StrapiRichText";
+
 export type SchedaTecnica = {
   Tensione_alimentazione?: string;
   Frequenza_nominale?: string;
@@ -21,8 +23,10 @@ export type SchedaTecnica = {
 export type Product = {
   id: number;
   nome: string;
-  slug: string; 
-  descrizione: string;
+  slug: string;
+  descrizione: StrapiRichTextBlock[] | string;
+  sottotitolo?: StrapiRichTextBlock[] | string;
+  intro_features?: StrapiRichTextBlock[] | string;
   prezzo: number;
   immagine?: {
     thumbnail?: string;
@@ -33,12 +37,13 @@ export type Product = {
   altezza: string;
   larghezza: string;
   profondita: string;
-  sottotitolo?: string;
-  intro_features?: string;
-  features?: { title: string; description: string }[];
+  features?: {
+    title: string;
+    description: StrapiRichTextBlock[] | string;
+  }[];
   composition_img?: string;
-  scheda_tecnica?: SchedaTecnica;
   gallery?: string[];
+  scheda_tecnica?: SchedaTecnica;
 };
 
 export type ProductField = keyof Product;

@@ -14,11 +14,10 @@ export default function Navbar() {
         {/* Navigation links */}
         <nav className="flex space-x-6 text-sm font-medium text-gray-800">
           <Link href="/prodotti" className="hover:text-red-600">Prodotti</Link>
-          <Link href="/azienda" className="hover:text-red-600">Azienda</Link>
+
           <Link href="/contatti" className="hover:text-red-600">Contatti</Link>
         </nav>
       </div>
     </header>
   );
 }
-ß

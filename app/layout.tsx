@@ -1,11 +1,11 @@
+// app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import ClientFooter from '@/components/ClientFooter';
 
 const inter = Inter({ subsets: ['latin'] });
-
 
 export const metadata: Metadata = {
   title: 'Sonotron Italia',
@@ -19,10 +19,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="it">
-      <body className={"${inter.className} bg-white text-gray-900 overflow-x-hidden"}>
+      <body className={`${inter.className} bg-white text-gray-900 overflow-x-hidden min-h-screen pt-24 pb-28 relative`}>
         <Header />
         <main className="relative w-full">{children}</main>
-        <Footer />
+        <ClientFooter />
       </body>
     </html>
   );

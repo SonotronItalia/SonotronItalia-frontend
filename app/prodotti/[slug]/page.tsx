@@ -3,7 +3,7 @@ import { getProductBySlugServer } from "@/lib/getProductBySlugServer";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { Metadata } from "next";
-import { RichTextRenderer } from "@/components/RichTextRenderer";
+import RichTextRenderer from "@/components/RichTextRenderer";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.sonotronitalia.com";
 
@@ -44,7 +44,7 @@ export default async function ProductDetailPage({ params }: Props) {
   if (!product) return notFound();
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pt-24 py-10 space-y-16">
+    <div className="max-w-6xl mx-auto px-4 pt-24 pb-28 py-10 space-y-16">
 
       {/* HERO */}
       <section className="grid md:grid-cols-2 gap-12 items-center">

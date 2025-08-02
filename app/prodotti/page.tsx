@@ -6,8 +6,8 @@ export default async function ProdottiPage() {
   const prodotti = await getProductsServer();
 
   return (
-    <div className="h-full w-full flex flex-col items-center justify-center bg-white text-gray-900 px-4 p-4 pt-24">
-      <h2 className="text-3xl text-center font-bold mb-6">I nostri prodotti</h2>
+    <div className="h-full w-full flex flex-col items-center justify-center bg-white text-gray-900 px-4 p-4 pt-24 pb-28">
+      <h2 className="text-3xl text-center font-bold mb-6">I nostri dispositivi</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-6xl">
         {prodotti.map((product) => (
